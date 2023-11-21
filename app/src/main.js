@@ -2,8 +2,6 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const electronReload = require('electron-reload');
 const Store = require('electron-store');
-const { HubConnectionBuilder, LogLevel } = require('@microsoft/signalr');
-
 
 const parentDir = path.join(__dirname, '..');
 electronReload(parentDir);
@@ -32,24 +30,7 @@ function createWindow() {
     mainWindow.loadFile('index.html');
 
     mainWindow.on('closed', function () {
-        if (hubConnection)
-            hubConnection.stop();
         mainWindow = null;
-    });
-
-    const hubConnection = new HubConnectionBuilder()
-        .withUrl('http://localhost:5000/chatHub')
-        .configureLogging(LogLevel.Debug)
-        .build();
-
-    hubConnection.start()
-        .then(() => {
-            console.log('SignalR hub is connected!');
-        })
-        .catch(err => console.error(err));
-
-    hubConnection.on('messageReceived', (user, message) => {
-        console.log(`${user}: ${message}`);
     });
 
 }
